@@ -29,3 +29,13 @@ class Sigmoid(Activation):
 
         y = self.forward(ak)
         return y(1-y) 
+    
+
+class Linear(Activation):
+
+    def forward(self, ak):
+        return ak
+    
+    def gradient(self, ak):
+        return np.ones(shape=ak.shape)
+    

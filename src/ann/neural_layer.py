@@ -46,3 +46,5 @@ class neural_layer:
 
         np.multiply(del_k, self.activation.gradient(self.ak), out=self.grad_b)
         np.outer(self.hk_1, self.grad_b, out=self.grad_W)
+
+        return np.matmul(self.W, self.grad_b)
