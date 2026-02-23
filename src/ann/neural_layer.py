@@ -17,18 +17,18 @@ class neural_layer:
 
         self.hk = None
         self.hk_1 = None
-        self.ak = np.zeros(shape=(nk,))
+        self.ak = None
 
-        self.grad_W = np.zeros(shape=(nk_1,nk))
-        self.grad_b = np.zeros(shape=(nk,))
+        self.grad_W = None
+        self.grad_b = None
 
         if initialization not in ['random','xavier']:
             raise ValueError('initialization should be random or xavier')
         
         elif initialization == 'random':
 
-            self.W = np.random.random(size=(nk_1,nk))
-            self.b = np.random.random(size=(nk,))
+            self.W = np.random.randn(nk_1,nk)*0.01
+            self.b = np.random.randn(nk)*0.01
         else:
             pass
 
@@ -36,15 +36,17 @@ class neural_layer:
 
         self.hk_1 = hk_1
 
-        np.matmul(self.W.T,hk_1,out=self.ak)
-        ak+= self.b
+        self.ak = np.matmul(hk_1, self.W)
+        self.ak+= self.b
 
-        self.hk = self.activation.forward(ak)
+        self.hk = self.activation.forward(self.ak)
     
 
     def backward(self, del_k):
 
-        np.multiply(del_k, self.activation.gradient(self.ak), out=self.grad_b)
-        np.outer(self.hk_1, self.grad_b, out=self.grad_W)
+        delta = del_k * self.activation.gradient(self.ak)
 
-        return np.matmul(self.W, self.grad_b)
+        self.grad_W = self.hk_1[:, :, None] * delta[:, None, :]
+        self.grad_b = delta
+
+        return delta @ self.W.T

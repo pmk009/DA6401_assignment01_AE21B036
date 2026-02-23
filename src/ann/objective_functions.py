@@ -22,7 +22,7 @@ class Cross_Entropy(objective_function):
 
     def loss(self, y, y_hat):
 
-        return -np.sum( np.multiply(y, np.log(y_hat)), axis=1)
+        return -np.sum( np.multiply(y, np.log(y_hat+1e-8)), axis=1)
     
     def gradient(self, y, y_hat):
         

@@ -10,8 +10,8 @@ from objective_functions import *
 from optimizers import *
 from utils.data_loader import *
 
-Activations = {'sigmoid': Sigmoid}
-Optimizers = {}
+Activations = {'sigmoid': Sigmoid, 'relu':ReLU}
+Optimizers = {'sgd': SGD}
 objective_functions = {'cross_entropy': Cross_Entropy}
 class NeuralNetwork:
     """
@@ -32,15 +32,15 @@ class NeuralNetwork:
 
         # parsing the required arguments
         self.num_layers = cli_args.nhl 
-        self.hidden_size = cli_args.nz
+        self.hidden_sizes = cli_args.sz
         self.activation = Activations[cli_args.a]
         self.weight_init = cli_args.w_i
 
         # Initializing the Neural network
         self.Layers = (
-            [neural_layer(self.hidden_size, self.input_size, self.activation, self.weight_init)] +
-            [neural_layer(self.hidden_size, self.hidden_size, self.activation, self.weight_init) for _ in range(self.num_layers-2)] +
-            [neural_layer(self.output_size, self.hidden_size, Linear, self.weight_init)]
+            [neural_layer(self.hidden_sizes[0], self.input_size, self.activation, self.weight_init)] +
+            [neural_layer(self.hidden_sizes[i+1], self.hidden_sizes[i], self.activation, self.weight_init) for i in range(self.num_layers-1)] +
+            [neural_layer(self.output_size, self.hidden_sizes[-1], Linear, self.weight_init)]
         )
 
         self.optimizer = Optimizers[cli_args.o](cli_args,self.Layers)
@@ -59,12 +59,12 @@ class NeuralNetwork:
         """
         hk_1 = X
 
-        for k in range(self.num_layers):
+        for k in range(self.num_layers+1):
 
             self.Layers[k].forward(hk_1)
             hk_1 = self.Layers[k].hk
         
-        self.Layers[-1].hk = self.output_act.forward()
+        self.Layers[-1].hk = self.output_act.forward(self.Layers[-1].hk)
         
         return self.Layers[-1].hk
     
@@ -81,12 +81,13 @@ class NeuralNetwork:
             return grad_w, grad_b
         """
         loss = self.objective.loss(y_true,y_pred)
-        del_k = loss.gradient(y_true,y_pred)
+        del_k = self.objective.gradient(y_true,y_pred)
 
-        for k in range(self.num_layers-1,-1,-1):
+        for k in range(self.num_layers,-1,-1):
 
             del_k = self.Layers[k].backward(del_k)
-        
+            if k==0:
+                print()
         return np.mean(loss)        
     
     def update_weights(self):

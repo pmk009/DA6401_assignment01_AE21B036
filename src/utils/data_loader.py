@@ -14,6 +14,8 @@ class Dataloader:
                  shuffle: bool = True,
                  normalize: bool = True,
                  flatten: bool = False,
+                 one_hot: bool = True,
+                 num_classes: int=10,
                  to_float32: bool = True):
 
         self.X = X
@@ -24,6 +26,8 @@ class Dataloader:
 
         self.normalize = normalize
         self.flatten = flatten
+        self.one_hot = one_hot
+        self.num_classes = num_classes
         self.to_float32 = to_float32
 
         self.num_samples = len(self.X)
@@ -59,6 +63,9 @@ class Dataloader:
 
         if self.flatten:
             X_batch = X_batch.reshape(X_batch.shape[0], -1)
+
+        if self.one_hot:
+            y_batch = np.eye(self.num_classes)[y_batch]
 
         return X_batch, y_batch
 
