@@ -49,11 +49,6 @@ class Softmax(Activation):
         
         return e_x / e_x_sum
     
-    def gradient(self, ak):
-
-        yi = self.forward(ak)
-        
-        return yi*(1-yi)
     
 
 class ReLU(Activation):

@@ -86,8 +86,7 @@ class NeuralNetwork:
         for k in range(self.num_layers,-1,-1):
 
             del_k = self.Layers[k].backward(del_k)
-            if k==0:
-                print()
+
         return np.mean(loss)        
     
     def update_weights(self):
@@ -102,6 +101,7 @@ class NeuralNetwork:
         Train the network for specified epochs.
         """
 
+        X_train, y_train, X_val, y_val = train_val_split(X_train, y_train, val_ratio=0.1)
         train_dataloader = Dataloader(X_train,y_train,batch_size,shuffle,True, True)
 
         for e in range(epochs):
@@ -118,16 +118,18 @@ class NeuralNetwork:
                 loss = self.backward(y, y_hat)
 
                 self.update_weights()
-
                 epoch_loss += loss
                 num_batches += 1
 
                 print(f"  Batch [{i+1}/{len(train_dataloader)}] "
                     f"Loss: {loss:.6f}", end="\r")
 
+            val_loss, val_acc = self.evaluate(X_val, y_val)
             avg_loss = epoch_loss / num_batches
             print(f"\nEpoch [{e+1}/{epochs}] "
-                f"Average Loss: {avg_loss:.6f}")
+              f"Train Loss: {avg_loss:.6f} | "
+              f"Val Loss: {val_loss:.6f} | "
+              f"Val Acc: {val_acc:.4f}")
 
     
     def evaluate(self, X: np.ndarray, y: np.ndarray):
@@ -136,33 +138,26 @@ class NeuralNetwork:
         """
         
         eval_dataloader = Dataloader(X,y,64,False,True,True)
-        total_loss = 0.0
+        total_loss = 0
         total_correct = 0
         total_samples = 0
-        num_batches = 0
-
-        print("\nEvaluation")
 
         for i, (X, y) in enumerate(eval_dataloader):
 
             y_hat = self.forward(X)
 
-            loss = self.loss(y, y_hat)
+            loss = self.objective.loss(y, y_hat)
 
-            total_loss += loss
-            num_batches += 1
+            total_loss += np.sum(loss)
 
             preds = np.argmax(y_hat, axis=1)
-            total_correct += np.sum(preds == y)
+            true_labels = np.argmax(y, axis=1)
+
+            total_correct += np.sum(preds == true_labels)
             total_samples += y.shape[0]
 
-            print(f"  Batch [{i+1}/{len(eval_dataloader)}] "
-                f"Loss: {loss:.6f}", end="\r")
-
-        avg_loss = total_loss / num_batches
+        avg_loss = total_loss / total_samples
         accuracy = total_correct / total_samples
-
-        print(f"\nEval Loss: {avg_loss:.6f} | Accuracy: {accuracy:.4f}")
 
         return avg_loss, accuracy
 

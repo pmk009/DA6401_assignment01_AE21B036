@@ -7,6 +7,21 @@ import numpy as np
 
 import numpy as np
 
+
+def train_val_split(X, y, val_ratio=0.1, shuffle=True):
+    n = len(X)
+    indices = np.arange(n)
+
+    if shuffle:
+        np.random.shuffle(indices)
+
+    split = int(n * (1 - val_ratio))
+
+    train_idx = indices[:split]
+    val_idx = indices[split:]
+
+    return X[train_idx], y[train_idx], X[val_idx], y[val_idx]
+
 class Dataloader:
 
     def __init__(self, X: np.ndarray, y: np.ndarray,
@@ -52,8 +67,8 @@ class Dataloader:
         batch_indices = self.indices[start:end]
         self.current = end
 
-        X_batch = self.X[batch_indices]
-        y_batch = self.y[batch_indices]
+        X_batch = self.X[batch_indices].copy()
+        y_batch = self.y[batch_indices].copy()
 
         if self.to_float32:
             X_batch = X_batch.astype(np.float32)

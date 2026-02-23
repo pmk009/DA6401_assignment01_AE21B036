@@ -25,6 +25,6 @@ class SGD(optimizer):
         for k in range(self.num_layers):
             
             L = self.Layers[k]
-            L.W -= self.lr*(np.mean(L.grad_W,axis=0) + self.weight_decay*L.W)
-            L.b -= self.lr*(np.mean(L.grad_b,axis=0) + self.weight_decay*L.b)
+            L.W -= self.lr*(L.grad_W + self.weight_decay*L.W)
+            L.b -= self.lr*(L.grad_b + self.weight_decay*L.b)
             
