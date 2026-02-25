@@ -6,6 +6,9 @@ Entry point for training neural networks with command-line arguments
 import argparse
 import numpy as np
 import wandb
+import os
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 from tensorflow.keras import datasets
 from ann.neural_network import *
 
@@ -35,7 +38,8 @@ def parse_arguments():
     parser.add_argument('-lr', '--learning_rate', type= float, default= 1e-3, help= 'Learning rate for optimizer')
     parser.add_argument('-o', '--optimizer', choices=['sgd', 'momentum', 'nag', 'rmsprop', 'adam', 'nadam'], default='sgd', help= '\'sgd\', \'momentum\', \'nag\', \'rmsprop\', \'adam\', \'nadam\'' )
     parser.add_argument('-nhl', '--num_layers', type=int, default=2, help= 'Number of hidden layers')
-    parser.add_argument('-sz', '--hidden_sizes', type=int, nargs='+', help= 'Number of neurons in each hidden layer (list of values)')
+    parser.add_argument('-sz', '--hidden_sizes', type=str, default="64,32", help='Comma-separated number of neurons (e.g., "128,64,32")')
+    # parser.add_argument('-sz', '--hidden_sizes', type=int, nargs='+', help= 'Number of neurons in each hidden layer (list of values)')
     parser.add_argument('-a', '--activation', choices= ['sigmoid', 'tanh', 'relu'], default='sigmoid', help= 'choice of sigmoid, tanh, relu')
     parser.add_argument('-l', '--loss', choices=['mean_squared_error', 'cross_entropy'], default='mean_squared_error', help= '(\'cross_entropy\', \'mse\')')
     parser.add_argument('-w_i', '--weight_init', choices= ['random', 'xavier'], default='random', help= 'choice of random or xavier')
@@ -45,13 +49,8 @@ def parse_arguments():
     
     return parser.parse_args()
 
+def train(args):
 
-def main():
-    """
-    Main training function.
-    """
-    args = parse_arguments()
-    
     dataset = {'mnist': datasets.mnist, 'fashion_mnist': datasets.fashion_mnist}
     (x_train,y_train),(x_test,y_test) = dataset[args.dataset].load_data()
 
@@ -70,6 +69,15 @@ def main():
     )
     
     NN.train(x_train,y_train,args.epochs,args.batch_size,wandb_run=wandb_run,save_path= args.save_path)
+
+def main():
+    """
+    Main training function.
+    """
+    args = parse_arguments()
+    
+    train(args)
+    
     
     print("Training complete!")
 

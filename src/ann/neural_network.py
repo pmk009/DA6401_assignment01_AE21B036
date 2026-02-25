@@ -13,7 +13,7 @@ import wandb
 
 
 Activations = {'sigmoid': Sigmoid, 'relu':ReLU, 'tanh': Tanh, 'softmax': Softmax }
-Optimizers = {'sgd': SGD, 'momentum': Momentum, 'nag': NAG, 'rmsprop': RMSProp}
+Optimizers = {'sgd': SGD, 'momentum': Momentum, 'nag': NAG, 'rmsprop': RMSProp, 'adam': Adam, 'nadam': NAdam}
 objective_functions = {'cross_entropy': Cross_Entropy, "mean_squared_error": Mean_squared_Error}
 class NeuralNetwork:
     """
@@ -33,9 +33,9 @@ class NeuralNetwork:
         self.output_act_str = output_act
         self.output_act = Activations[output_act]()
 
-        # parsing the required arguments
-        self.num_layers = cli_args.num_layers 
-        self.hidden_sizes = cli_args.hidden_sizes
+        # parsing the required arguments 
+        self.hidden_sizes = [int(x) for x in cli_args.hidden_sizes.split()]
+        self.num_layers = len(self.hidden_sizes)
         self.activation = Activations[cli_args.activation]
         self.weight_init = cli_args.weight_init
 
@@ -104,7 +104,7 @@ class NeuralNetwork:
         Train the network for specified epochs.
         """
 
-        X_train, y_train, X_val, y_val = train_val_split(X_train, y_train, val_ratio=0.1)
+        X_train, y_train, X_val, y_val = train_val_split(X_train, y_train, val_ratio=0.2)
         train_dataloader = Dataloader(X_train,y_train,batch_size,shuffle,True, True)
         max_val_acc = 0
 
@@ -149,7 +149,7 @@ class NeuralNetwork:
         Evaluate the network on given data.
         """
         
-        eval_dataloader = Dataloader(X,y,64,False,True,True)
+        eval_dataloader = Dataloader(X,y,64,False,True,True,augment=False)
         total_loss = 0
         total_correct = 0
         total_samples = 0
