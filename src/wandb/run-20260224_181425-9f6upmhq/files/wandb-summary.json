@@ -1,0 +1,1 @@
+{"val/loss":0.08166209998106427,"_runtime":102,"train/loss":0.04313053401085321,"optimizer(sgd)/wd":0.001,"epoch":100,"_step":99,"_wandb":{"runtime":102},"val/acc":0.975,"optimizer(sgd)/lr":0.05,"_timestamp":1.7719371691558444e+09}

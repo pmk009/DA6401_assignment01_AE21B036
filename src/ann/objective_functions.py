@@ -28,3 +28,14 @@ class Cross_Entropy(objective_function):
         
         return (y_hat - y)
     
+
+class Mean_squared_Error(objective_function):
+
+    def loss(self, y, y_hat):
+        
+        return np.square(y-y_hat)
+    
+    def gradient(self, y, y_hat):
+        
+        return 2*(y_hat-y)
+    

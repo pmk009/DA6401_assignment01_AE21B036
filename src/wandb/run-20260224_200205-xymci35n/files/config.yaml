@@ -1,0 +1,101 @@
+_wandb:
+    value:
+        cli_version: 0.25.0
+        e:
+            q4wi4q5inqas1ty3wd3f30u5fjh7ubis:
+                args:
+                    - -e
+                    - "100"
+                    - -b
+                    - "64"
+                    - -nhl
+                    - "2"
+                    - -sz
+                    - "128"
+                    - "128"
+                    - -a
+                    - relu
+                    - -l
+                    - cross_entropy
+                    - -wbp
+                    - demo
+                    - -o
+                    - momentum
+                codePath: src/train.py
+                codePathLocal: train.py
+                cpu_count: 8
+                cpu_count_logical: 16
+                cudaVersion: "13.1"
+                disk:
+                    /:
+                        total: "102911500288"
+                        used: "58778476544"
+                email: ae21b036@smail.iitm.ac.in
+                executable: /home/mk009/anaconda3/envs/da6401/bin/python
+                git:
+                    commit: 56f84e41062bfbef0f8e4866330acd80d727799f
+                    remote: git@github.com:pmk009/DA6401_assignment01_AE21B036.git
+                gpu: NVIDIA GeForce RTX 4050 Laptop GPU
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ada
+                      cudaCores: 2560
+                      memoryTotal: "6439305216"
+                      name: NVIDIA GeForce RTX 4050 Laptop GPU
+                      uuid: GPU-00cd1f6e-a1ae-3c95-7b14-66f39f58789f
+                host: mk009-TUF
+                memory:
+                    total: "16015970304"
+                os: Linux-6.17.0-14-generic-x86_64-with-glibc2.39
+                program: /home/mk009/DA6401/ae21b036_da6401_assignment-01/src/train.py
+                python: CPython 3.11.14
+                root: /home/mk009/DA6401/ae21b036_da6401_assignment-01/src
+                startedAt: "2026-02-24T14:32:05.055374Z"
+                writerId: q4wi4q5inqas1ty3wd3f30u5fjh7ubis
+        m: []
+        python_version: 3.11.14
+        t:
+            "1":
+                - 2
+                - 3
+                - 5
+                - 53
+            "2":
+                - 2
+                - 3
+                - 5
+                - 53
+            "3":
+                - 16
+            "4": 3.11.14
+            "5": 0.25.0
+            "12": 0.25.0
+            "13": linux-x86_64
+activation:
+    value: relu
+batch_size:
+    value: 64
+dataset:
+    value: mnist
+epochs:
+    value: 100
+hidden_sizes:
+    value:
+        - 128
+        - 128
+learning_rate:
+    value: 0.001
+loss:
+    value: cross_entropy
+num_layers:
+    value: 2
+optimizer:
+    value: momentum
+save_path:
+    value: models/model
+wandb_project:
+    value: demo
+weight_decay:
+    value: 0.001
+weight_init:
+    value: random

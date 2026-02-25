@@ -1,0 +1,11 @@
+
+Epoch [1/100]
+Traceback (most recent call last):
+  File "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/train.py", line 79, in <module>
+    main()
+  File "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/train.py", line 73, in main
+    NN.train(x_train,y_train,args.epochs,args.batch_size,wandb_run=wandb_run,save_path= args.save_path)
+  File "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann/neural_network.py", line 120, in train
+    self.optimizer.nestrov_update()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NAG' object has no attribute 'nestrov_update'

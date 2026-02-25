@@ -1,0 +1,92 @@
+
+Epoch [1/100]
+  Batch [422/422] Loss: 2.303847
+Epoch [1/100] Train Loss: 2.302030 | Val Loss: 2.301745 | Val Acc: 0.1103
+
+Epoch [2/100]
+  Batch [422/422] Loss: 2.298292
+Epoch [2/100] Train Loss: 2.301353 | Val Loss: 2.301563 | Val Acc: 0.1103
+
+Epoch [3/100]
+  Batch [422/422] Loss: 2.306544
+Epoch [3/100] Train Loss: 2.301166 | Val Loss: 2.301570 | Val Acc: 0.1103
+
+Epoch [4/100]
+  Batch [422/422] Loss: 2.298652
+Epoch [4/100] Train Loss: 2.301136 | Val Loss: 2.301631 | Val Acc: 0.1103
+
+Epoch [5/100]
+  Batch [422/422] Loss: 2.300606
+Epoch [5/100] Train Loss: 2.301154 | Val Loss: 2.301667 | Val Acc: 0.1103
+
+Epoch [6/100]
+  Batch [422/422] Loss: 2.301189
+Epoch [6/100] Train Loss: 2.301176 | Val Loss: 2.301700 | Val Acc: 0.1103
+
+Epoch [7/100]
+  Batch [422/422] Loss: 2.305448
+Epoch [7/100] Train Loss: 2.301225 | Val Loss: 2.301717 | Val Acc: 0.1103
+
+Epoch [8/100]
+  Batch [422/422] Loss: 2.295552
+Epoch [8/100] Train Loss: 2.301220 | Val Loss: 2.301731 | Val Acc: 0.1103
+
+Epoch [9/100]
+  Batch [422/422] Loss: 2.299953
+Epoch [9/100] Train Loss: 2.301246 | Val Loss: 2.301758 | Val Acc: 0.1103
+
+Epoch [10/100]
+  Batch [422/422] Loss: 2.303055
+Epoch [10/100] Train Loss: 2.301267 | Val Loss: 2.301760 | Val Acc: 0.1103
+
+Epoch [11/100]
+  Batch [422/422] Loss: 2.303514
+Epoch [11/100] Train Loss: 2.301276 | Val Loss: 2.301771 | Val Acc: 0.1103
+
+Epoch [12/100]
+  Batch [422/422] Loss: 2.302515
+Epoch [12/100] Train Loss: 2.301263 | Val Loss: 2.301779 | Val Acc: 0.1103
+
+Epoch [13/100]
+  Batch [422/422] Loss: 2.303268
+Epoch [13/100] Train Loss: 2.301279 | Val Loss: 2.301782 | Val Acc: 0.1103
+
+Epoch [14/100]
+  Batch [422/422] Loss: 2.306668
+Epoch [14/100] Train Loss: 2.301267 | Val Loss: 2.301775 | Val Acc: 0.1103
+
+Epoch [15/100]
+  Batch [422/422] Loss: 2.295611
+Epoch [15/100] Train Loss: 2.301260 | Val Loss: 2.301778 | Val Acc: 0.1103
+
+Epoch [16/100]
+  Batch [422/422] Loss: 2.301917
+Epoch [16/100] Train Loss: 2.301280 | Val Loss: 2.301780 | Val Acc: 0.1103
+
+Epoch [17/100]
+  Batch [422/422] Loss: 2.308607
+Epoch [17/100] Train Loss: 2.301291 | Val Loss: 2.301766 | Val Acc: 0.1103
+
+Epoch [18/100]
+  Batch [422/422] Loss: 2.307227
+Epoch [18/100] Train Loss: 2.301270 | Val Loss: 2.301781 | Val Acc: 0.1103
+
+Epoch [19/100]
+  Batch [422/422] Loss: 2.305222
+Epoch [19/100] Train Loss: 2.301271 | Val Loss: 2.301791 | Val Acc: 0.1103
+
+Epoch [20/100]
+  Batch [323/422] Loss: 2.297739
+Traceback (most recent call last):
+  File "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/train.py", line 79, in <module>
+    main()
+  File "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/train.py", line 73, in main
+    NN.train(x_train,y_train,args.epochs,args.batch_size,wandb_run=wandb_run,save_path= args.save_path)
+  File "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann/neural_network.py", line 124, in train
+    self.update_weights()
+  File "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann/neural_network.py", line 99, in update_weights
+    self.optimizer.update()
+  File "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann/optimizers.py", line 75, in update
+    self.Layers[i].b += self.b_Momentums[i]
+    ^^^^^^^^^^^^^^^^
+KeyboardInterrupt

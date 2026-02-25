@@ -1,0 +1,39 @@
+_wandb:
+    value:
+        cli_version: 0.25.0
+        e:
+            a6tbj278lahfa2y8j80vxri8q5z7dt3q:
+                codePath: /home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann/rough.ipynb
+                codePathLocal: rough.ipynb
+                email: ae21b036@smail.iitm.ac.in
+                executable: /home/mk009/anaconda3/envs/da6401/bin/python
+                git:
+                    commit: 56f84e41062bfbef0f8e4866330acd80d727799f
+                    remote: git@github.com:pmk009/DA6401_assignment01_AE21B036.git
+                host: mk009-TUF
+                os: Linux-6.17.0-14-generic-x86_64-with-glibc2.39
+                program: /home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann/rough.ipynb
+                python: CPython 3.11.14
+                root: /home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann
+                startedAt: "2026-02-24T04:05:28.528299Z"
+                writerId: a6tbj278lahfa2y8j80vxri8q5z7dt3q
+        m: []
+        python_version: 3.11.14
+        t:
+            "3":
+                - 2
+                - 16
+            "4": 3.11.14
+            "5": 0.25.0
+            "8":
+                - 1
+            "12": 0.25.0
+            "13": linux-x86_64
+architecture:
+    value: CNN
+dataset:
+    value: CIFAR-100
+epochs:
+    value: 10
+learning_rate:
+    value: 0.02

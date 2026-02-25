@@ -1,0 +1,17 @@
+{
+  "os":  "Linux-6.17.0-14-generic-x86_64-with-glibc2.39",
+  "python":  "CPython 3.11.14",
+  "startedAt":  "2026-02-24T04:33:15.644117Z",
+  "program":  "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann/rough.ipynb",
+  "codePath":  "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann/rough.ipynb",
+  "codePathLocal":  "rough.ipynb",
+  "git":  {
+    "remote":  "git@github.com:pmk009/DA6401_assignment01_AE21B036.git",
+    "commit":  "56f84e41062bfbef0f8e4866330acd80d727799f"
+  },
+  "email":  "ae21b036@smail.iitm.ac.in",
+  "root":  "/home/mk009/DA6401/ae21b036_da6401_assignment-01/src/ann",
+  "host":  "mk009-TUF",
+  "executable":  "/home/mk009/anaconda3/envs/da6401/bin/python",
+  "writerId":  "lx9e18kp3hg4x10jsjnthi575xth33sm"
+}

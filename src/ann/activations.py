@@ -62,7 +62,7 @@ class ReLU(Activation):
         return (ak>0.)*1.
 
 
-class tanh(Activation):
+class Tanh(Activation):
 
     def forward(self, ak):
 

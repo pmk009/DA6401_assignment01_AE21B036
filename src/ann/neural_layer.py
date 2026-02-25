@@ -4,7 +4,7 @@ Handles weight initialization, forward pass, and gradient computation
 """
 
 import numpy as np
-from activations import *
+from ann.activations import *
 
 
 class neural_layer:
@@ -29,6 +29,10 @@ class neural_layer:
 
             self.W = np.random.randn(nk_1,nk)*0.01
             self.b = np.random.randn(nk)*0.01
+        
+        elif initialization == 'xavier':
+            self.W = np.random.normal(0, 2.0/np.sqrt(self.prev_num_neurons+self.num_neurons), size=(nk_1,nk))
+            self.b = np.zeros(shape=(nk,))
         else:
             pass
 

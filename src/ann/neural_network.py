@@ -4,37 +4,40 @@ Handles forward and backward propagation loops
 """
 import numpy as np
 import argparse
-from neural_layer import *
-from activations import *
-from objective_functions import *
-from optimizers import *
+from ann.neural_layer import *
+from ann.activations import *
+from ann.objective_functions import *
+from ann.optimizers import *
 from utils.data_loader import *
+import wandb
 
-Activations = {'sigmoid': Sigmoid, 'relu':ReLU}
-Optimizers = {'sgd': SGD}
-objective_functions = {'cross_entropy': Cross_Entropy}
+
+Activations = {'sigmoid': Sigmoid, 'relu':ReLU, 'tanh': Tanh, 'softmax': Softmax }
+Optimizers = {'sgd': SGD, 'momentum': Momentum, 'nag': NAG, 'rmsprop': RMSProp}
+objective_functions = {'cross_entropy': Cross_Entropy, "mean_squared_error": Mean_squared_Error}
 class NeuralNetwork:
     """
     Main model class that orchestrates the neural network training and inference.
     """
     
-    def __init__(self, input_size: int, output_size: int, output_act: Activation, cli_args: argparse.Namespace):
+    def __init__(self, input_size: int, output_size: int, output_act: str, cli_args: argparse.Namespace):
         """
         Initialize the neural network.
 
         Args:
             cli_args: Command-line arguments for configuring the network
         """
-
+        self.cli_args = cli_args
         self.input_size = input_size
         self.output_size = output_size
-        self.output_act = output_act()
+        self.output_act_str = output_act
+        self.output_act = Activations[output_act]()
 
         # parsing the required arguments
-        self.num_layers = cli_args.nhl 
-        self.hidden_sizes = cli_args.sz
-        self.activation = Activations[cli_args.a]
-        self.weight_init = cli_args.w_i
+        self.num_layers = cli_args.num_layers 
+        self.hidden_sizes = cli_args.hidden_sizes
+        self.activation = Activations[cli_args.activation]
+        self.weight_init = cli_args.weight_init
 
         # Initializing the Neural network
         self.Layers = (
@@ -43,8 +46,8 @@ class NeuralNetwork:
             [neural_layer(self.output_size, self.hidden_sizes[-1], Linear, self.weight_init)]
         )
 
-        self.optimizer = Optimizers[cli_args.o](cli_args,self.Layers)
-        self.objective = objective_functions[cli_args.l]()
+        self.optimizer = Optimizers[cli_args.optimizer](cli_args,self.Layers)
+        self.objective = objective_functions[cli_args.loss]()
 
     
     def forward(self, X: np.ndarray):
@@ -96,13 +99,14 @@ class NeuralNetwork:
         self.optimizer.update()
         
     
-    def train(self, X_train: np.ndarray, y_train: np.ndarray, epochs: int, batch_size: int, shuffle: bool=True):
+    def train(self, X_train: np.ndarray, y_train: np.ndarray, epochs: int, batch_size: int,save_path: str='models/model.npz', shuffle: bool=True, wandb_run: wandb.Run|None=None):
         """
         Train the network for specified epochs.
         """
 
         X_train, y_train, X_val, y_val = train_val_split(X_train, y_train, val_ratio=0.1)
         train_dataloader = Dataloader(X_train,y_train,batch_size,shuffle,True, True)
+        max_val_acc = 0
 
         for e in range(epochs):
 
@@ -113,10 +117,11 @@ class NeuralNetwork:
 
             for i, (X, y) in enumerate(train_dataloader):
 
+                self.optimizer.nesterov_update()
                 y_hat = self.forward(X)
 
                 loss = self.backward(y, y_hat)
-
+                self.optimizer.nesterov_revert()
                 self.update_weights()
                 epoch_loss += loss
                 num_batches += 1
@@ -125,11 +130,18 @@ class NeuralNetwork:
                     f"Loss: {loss:.6f}", end="\r")
 
             val_loss, val_acc = self.evaluate(X_val, y_val)
+            if val_acc>max_val_acc:
+                max_val_acc = val_acc
+                self.save_model(save_path)
             avg_loss = epoch_loss / num_batches
+            if wandb_run:
+                wandb_run.log({'epoch': e+1, 'train/loss': avg_loss, 'val/loss': val_loss, 'val/acc': val_acc}|self.optimizer.log())
+
             print(f"\nEpoch [{e+1}/{epochs}] "
               f"Train Loss: {avg_loss:.6f} | "
               f"Val Loss: {val_loss:.6f} | "
               f"Val Acc: {val_acc:.4f}")
+        
 
     
     def evaluate(self, X: np.ndarray, y: np.ndarray):
@@ -160,4 +172,39 @@ class NeuralNetwork:
         accuracy = total_correct / total_samples
 
         return avg_loss, accuracy
+    
+    def save_model(self,path: str):
+        """
+        Save the current state of the model
+        """
+        save_dict = {}
+
+        for i, layer in enumerate(self.Layers):
+            save_dict[f"W_{i}"] = layer.W
+            save_dict[f"b_{i}"] = layer.b
+
+        save_dict["cli_args"] = np.array([vars(self.cli_args)], dtype=object)
+
+        np.savez(path, **save_dict, input_dim=self.input_size,output_dim=self.output_size,output_act=self.output_act_str)
+    
+    @classmethod
+    def load(cls, path: str):
+
+        data = np.load(path, allow_pickle=True)
+
+        model = cls(
+            int(data['input_dim']),
+            int(data['output_dim']),
+            str(data['output_act']),
+            argparse.Namespace(**data["cli_args"][0])
+        )
+
+        for i, layer in enumerate(model.Layers):
+            layer.W = data[f"W_{i}"].copy()
+            layer.b = data[f"b_{i}"].copy()
+
+        return model
+        
+            
+
 

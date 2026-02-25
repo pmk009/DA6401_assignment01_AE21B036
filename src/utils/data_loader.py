@@ -5,8 +5,6 @@ Handles MNIST and Fashion-MNIST datasets
 
 import numpy as np
 
-import numpy as np
-
 
 def train_val_split(X, y, val_ratio=0.1, shuffle=True):
     n = len(X)
