@@ -1,6 +1,6 @@
 program: train.py
 
-project: assignment-01
+project: assignment_01
 
 method: random
 
@@ -11,7 +11,7 @@ metric:
 parameters:
 
   wandb_project:
-    value: "assignment-01"
+    value: "assignment_01"
 
   dataset:
     value: "mnist"

@@ -33,7 +33,7 @@ class Mean_squared_Error(objective_function):
 
     def loss(self, y, y_hat):
         
-        return np.square(y-y_hat)
+        return np.sum(np.square(y-y_hat), axis=1)
     
     def gradient(self, y, y_hat):
         

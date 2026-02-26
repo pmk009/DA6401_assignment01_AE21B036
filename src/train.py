@@ -49,10 +49,9 @@ def parse_arguments():
     
     return parser.parse_args()
 
-def train(args):
+def train(args,x_train: np.ndarray,y_train: np.ndarray, wandb_run: wandb.Run|None=None):
 
-    dataset = {'mnist': datasets.mnist, 'fashion_mnist': datasets.fashion_mnist}
-    (x_train,y_train),(x_test,y_test) = dataset[args.dataset].load_data()
+    
 
     input_size = int(x_train.shape[1]*x_train.shape[2])
     output_size = 10
@@ -60,26 +59,48 @@ def train(args):
     NN = NeuralNetwork(input_size,output_size,output_act,args)
     print('Neural Network initialized..')
 
-    wandb_run = None
-    if args.wandb_project != '':
-        wandb_run = wandb.init(
-    entity="DA6401",
-    project=args.wandb_project,
-    config=vars(args)
-    )
+    
     
     NN.train(x_train,y_train,args.epochs,args.batch_size,wandb_run=wandb_run,save_path= args.save_path)
+
+    return NN
 
 def main():
     """
     Main training function.
     """
     args = parse_arguments()
+
+    dataset = {'mnist': datasets.mnist, 'fashion_mnist': datasets.fashion_mnist}
+    (x_train,y_train),(x_test,y_test) = dataset[args.dataset].load_data()
+
+    wandb_run = None
+    if args.wandb_project != '':
+        wandb_run = wandb.init(
+    entity="DA6401_assignment01",
+    project=args.wandb_project,
+    config=vars(args)
+    )
     
-    train(args)
+    if os.path.exists("models/best_model"):
+        data = np.load("models/best_model", allow_pickle=True)
+        best_val_acc = float(data["val_acc"])
+    else:
+        best_val_acc = 0.0
     
-    
+    model = train(args,x_train,y_train, wandb_run)
     print("Training complete!")
+    
+    if model.max_val_acc>best_val_acc:
+    
+        model.save_model(path="models/best_model", val_acc=model.max_val_acc)
+        print("New best model Saved.")
+    
+
+    test_loss, test_acc = model.evaluate(x_test, y_test)
+
+    wandb_run.log({"test/loss": test_loss, "test/acc": test_acc})
+
 
 
 if __name__ == '__main__':

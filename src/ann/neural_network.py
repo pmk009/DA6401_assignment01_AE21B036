@@ -90,7 +90,7 @@ class NeuralNetwork:
 
             del_k = self.Layers[k].backward(del_k)
 
-        return np.mean(loss)        
+        return loss        
     
     def update_weights(self):
         """
@@ -106,12 +106,13 @@ class NeuralNetwork:
 
         X_train, y_train, X_val, y_val = train_val_split(X_train, y_train, val_ratio=0.2)
         train_dataloader = Dataloader(X_train,y_train,batch_size,shuffle,True, True)
-        max_val_acc = 0
+        self.max_val_acc = 0.
 
         for e in range(epochs):
 
-            epoch_loss = 0.0
-            num_batches = 0
+            total_loss = 0.0
+            total_correct = 0
+            total_samples = 0
 
             print(f"\nEpoch [{e+1}/{epochs}]")
 
@@ -120,25 +121,36 @@ class NeuralNetwork:
                 self.optimizer.nesterov_update()
                 y_hat = self.forward(X)
 
+                preds = np.argmax(y_hat, axis=1)
+                true_labels = np.argmax(y, axis=1)
+                total_correct += np.sum(preds == true_labels)
+                total_samples += y.shape[0]
+
                 loss = self.backward(y, y_hat)
                 self.optimizer.nesterov_revert()
                 self.update_weights()
-                epoch_loss += loss
-                num_batches += 1
+                total_loss += np.sum(loss)
 
                 print(f"  Batch [{i+1}/{len(train_dataloader)}] "
-                    f"Loss: {loss:.6f}", end="\r")
+                    f"Loss: {np.mean(loss):.6f}", end="\r")
 
             val_loss, val_acc = self.evaluate(X_val, y_val)
-            if val_acc>max_val_acc:
-                max_val_acc = val_acc
-                self.save_model(save_path)
-            avg_loss = epoch_loss / num_batches
+            if val_acc>self.max_val_acc:
+                self.max_val_acc = val_acc
+                self.save_model(save_path, val_acc)
+            avg_loss = total_loss/ total_samples
+            avg_acc = total_correct/ total_samples
             if wandb_run:
-                wandb_run.log({'epoch': e+1, 'train/loss': avg_loss, 'val/loss': val_loss, 'val/acc': val_acc}|self.optimizer.log())
+                wandb_run.log({
+                    'epoch': e+1,
+                    'train/loss': avg_loss,
+                    'train/acc': avg_acc,
+                    'val/loss': val_loss,
+                    'val/acc': val_acc}|self.optimizer.log())
 
             print(f"\nEpoch [{e+1}/{epochs}] "
               f"Train Loss: {avg_loss:.6f} | "
+              f"Train Acc: {avg_acc:.6f} | "
               f"Val Loss: {val_loss:.6f} | "
               f"Val Acc: {val_acc:.4f}")
         
@@ -173,7 +185,7 @@ class NeuralNetwork:
 
         return avg_loss, accuracy
     
-    def save_model(self,path: str):
+    def save_model(self,path: str, val_acc: float=0.0):
         """
         Save the current state of the model
         """
@@ -184,6 +196,7 @@ class NeuralNetwork:
             save_dict[f"b_{i}"] = layer.b
 
         save_dict["cli_args"] = np.array([vars(self.cli_args)], dtype=object)
+        save_dict["val_acc"] = val_acc
 
         np.savez(path, **save_dict, input_dim=self.input_size,output_dim=self.output_size,output_act=self.output_act_str)
     
