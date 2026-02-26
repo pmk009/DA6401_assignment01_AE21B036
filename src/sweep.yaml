@@ -5,7 +5,7 @@ project: assignment_01
 method: random
 
 metric:
-  name: val/acc
+  name: val/max_acc
   goal: maximize
 
 parameters:
@@ -23,7 +23,7 @@ parameters:
     values: [32, 64, 128]
 
   learning_rate:
-    distribution: log_uniform
+    distribution: log_uniform_values
     min: 0.0001
     max: 0.01
 

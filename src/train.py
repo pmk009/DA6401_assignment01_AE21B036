@@ -57,7 +57,6 @@ def train(args,x_train: np.ndarray,y_train: np.ndarray, wandb_run: wandb.Run|Non
     output_size = 10
     output_act = 'softmax' 
     NN = NeuralNetwork(input_size,output_size,output_act,args)
-    print('Neural Network initialized..')
 
     
     
@@ -82,24 +81,23 @@ def main():
     config=vars(args)
     )
     
-    if os.path.exists("models/best_model"):
-        data = np.load("models/best_model", allow_pickle=True)
+    if os.path.exists("models/best_model.npz"):
+        data = np.load("models/best_model.npz", allow_pickle=True)
         best_val_acc = float(data["val_acc"])
     else:
         best_val_acc = 0.0
     
     model = train(args,x_train,y_train, wandb_run)
     print("Training complete!")
-    
     if model.max_val_acc>best_val_acc:
     
-        model.save_model(path="models/best_model", val_acc=model.max_val_acc)
+        model.save_model(path="models/best_model.npz", val_acc=model.max_val_acc)
         print("New best model Saved.")
     
 
     test_loss, test_acc = model.evaluate(x_test, y_test)
 
-    wandb_run.log({"test/loss": test_loss, "test/acc": test_acc})
+    wandb_run.log({"test/loss": test_loss, "test/acc": test_acc, "val/max_acc": model.max_val_acc})
 
 
 
