@@ -6,7 +6,10 @@ Handles MNIST and Fashion-MNIST datasets
 import numpy as np
 
 
-def train_val_split(X, y, val_ratio=0.1, shuffle=True):
+def train_val_split(X, y, val_ratio=0.2, shuffle=True):
+    """
+    To split the Train data into train and validation 
+    """
     n = len(X)
     indices = np.arange(n)
 
@@ -26,24 +29,15 @@ class Dataloader:
     def __init__(self, X: np.ndarray, y: np.ndarray,
                  batch_size: int = 32,
                  shuffle: bool = True,
-                 normalize: bool = True,
-                 flatten: bool = True,
-                 one_hot: bool = True,
                  num_classes: int = 10,
-                 to_float32: bool = True,
-                 augment: bool = True):
+                 augment: bool = False):
 
         self.X = X
         self.y = y
 
         self.batch_size = batch_size
         self.shuffle = shuffle
-
-        self.normalize = normalize
-        self.flatten = flatten
-        self.one_hot = one_hot
         self.num_classes = num_classes
-        self.to_float32 = to_float32
         self.augment = augment
 
         self.num_samples = len(self.X)
@@ -71,20 +65,15 @@ class Dataloader:
         X_batch = self.X[batch_indices]
         y_batch = self.y[batch_indices]
 
-        if self.to_float32:
-            X_batch = X_batch.astype(np.float32)
-
-        if self.normalize:
-            X_batch /= 255.0
+        X_batch = X_batch.astype(np.float32) # To float32 
+        X_batch /= 255.0 # Normalizing the data
 
         if self.augment:
-            X_batch = self.apply_augmentation(X_batch)
+            X_batch = self.apply_augmentation(X_batch) # Data augmentation
 
-        if self.flatten:
-            X_batch = X_batch.reshape(X_batch.shape[0], -1)
+        X_batch = X_batch.reshape(X_batch.shape[0], -1) # Flattening to 1D array
 
-        if self.one_hot:
-            y_batch = np.eye(self.num_classes)[y_batch]
+        y_batch = np.eye(self.num_classes)[y_batch] # One hot encoding the output
 
         return X_batch, y_batch
 

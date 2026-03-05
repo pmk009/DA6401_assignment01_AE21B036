@@ -5,7 +5,9 @@ Implements: SGD, Momentum, Adam, Nadam, etc.
 import numpy as np
 import argparse
 class optimizer:
-
+    """
+    Common Skeleton for all Optimizer classes
+    """
     def update(self):
         pass
 

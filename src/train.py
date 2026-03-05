@@ -7,10 +7,9 @@ import argparse
 import numpy as np
 import wandb
 import os
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 from tensorflow.keras import datasets
 from ann.neural_network import *
+from inference import evaluate_model
 
 def parse_arguments():
     """
@@ -33,33 +32,30 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Train a neural network')
 
     parser.add_argument('-d', '--dataset', choices=['mnist', 'fashion_mnist'], default= 'mnist', help= '\'mnist\' or \'fashion_mnist\'')
-    parser.add_argument('-e', '--epochs', type= int, default= 20, help= 'Number of training epochs')
-    parser.add_argument('-b', '--batch_size', type= int, default= 64, help= 'Mini-batch size')
-    parser.add_argument('-lr', '--learning_rate', type= float, default= 1e-3, help= 'Learning rate for optimizer')
-    parser.add_argument('-o', '--optimizer', choices=['sgd', 'momentum', 'nag', 'rmsprop', 'adam', 'nadam'], default='sgd', help= '\'sgd\', \'momentum\', \'nag\', \'rmsprop\', \'adam\', \'nadam\'' )
-    parser.add_argument('-nhl', '--num_layers', type=int, default=2, help= 'Number of hidden layers')
-    parser.add_argument('-sz', '--hidden_sizes', type=str, default="64,32", help='Comma-separated number of neurons (e.g., "128,64,32")')
-    # parser.add_argument('-sz', '--hidden_sizes', type=int, nargs='+', help= 'Number of neurons in each hidden layer (list of values)')
-    parser.add_argument('-a', '--activation', choices= ['sigmoid', 'tanh', 'relu'], default='sigmoid', help= 'choice of sigmoid, tanh, relu')
-    parser.add_argument('-l', '--loss', choices=['mean_squared_error', 'cross_entropy'], default='mean_squared_error', help= '(\'cross_entropy\', \'mse\')')
-    parser.add_argument('-w_i', '--weight_init', choices= ['random', 'xavier'], default='random', help= 'choice of random or xavier')
-    parser.add_argument('-wd', '--weight_decay', type= float, default=1e-3, help= 'Weight decay for L2 regularization')
-    parser.add_argument('-wbp', '--wandb_project', default= '', help= 'W&B project name')
+    parser.add_argument('-e', '--epochs', type= int, default= 30, help= 'Number of training epochs')
+    parser.add_argument('-b', '--batch_size', type= int, default= 32, help= 'Mini-batch size')
+    parser.add_argument('-lr', '--learning_rate', type= float, default= 0.000232944, help= 'Learning rate for optimizer')
+    parser.add_argument('-o', '--optimizer', choices=['sgd', 'momentum', 'nag', 'rmsprop', 'adam', 'nadam'], default='adam', help= '\'sgd\', \'momentum\', \'nag\', \'rmsprop\', \'adam\', \'nadam\'' )
+    parser.add_argument('-nhl', '--num_layers', type=int, default=3, help= 'Number of hidden layers')
+    parser.add_argument('-sz', '--hidden_sizes', type=str, default="128,128,64", help='Comma-separated number of neurons (e.g., "128,64,32")')
+    parser.add_argument('-a', '--activation', choices= ['sigmoid', 'tanh', 'relu'], default='relu', help= 'choice of sigmoid, tanh, relu')
+    parser.add_argument('-l', '--loss', choices=['mean_squared_error', 'cross_entropy'], default='cross_entropy', help= '(\'cross_entropy\', \'mse\')')
+    parser.add_argument('-w_i', '--weight_init', choices= ['random', 'xavier'], default='xavier', help= 'choice of random or xavier')
+    parser.add_argument('-wd', '--weight_decay', type= float, default=1e-4, help= 'Weight decay for L2 regularization')
+    parser.add_argument('-w_p', '--wandb_project', default= '', help= 'W&B project name')
     parser.add_argument('-sp', '--save_path', default='models/model', help= 'Path to save trained model')
     
     return parser.parse_args()
 
 def train(args,x_train: np.ndarray,y_train: np.ndarray, wandb_run: wandb.Run|None=None):
 
-    
-
+    # Initializing the Neural Network
     input_size = int(x_train.shape[1]*x_train.shape[2])
     output_size = 10
     output_act = 'softmax' 
     NN = NeuralNetwork(input_size,output_size,output_act,args)
-
     
-    
+    # Training
     NN.train(x_train,y_train,args.epochs,args.batch_size,wandb_run=wandb_run,save_path= args.save_path)
 
     return NN
@@ -70,9 +66,11 @@ def main():
     """
     args = parse_arguments()
 
+    # Load Dataset
     dataset = {'mnist': datasets.mnist, 'fashion_mnist': datasets.fashion_mnist}
     (x_train,y_train),(x_test,y_test) = dataset[args.dataset].load_data()
 
+    # Wandb Run initialization
     wandb_run = None
     if args.wandb_project != '':
         wandb_run = wandb.init(
@@ -81,23 +79,37 @@ def main():
     config=vars(args)
     )
     
+    # Keeping track of the best model from Validation accuracy
     if os.path.exists("models/best_model.npz"):
         data = np.load("models/best_model.npz", allow_pickle=True)
         best_val_acc = float(data["val_acc"])
     else:
         best_val_acc = 0.0
     
+    # Training and retreiving the model
     model = train(args,x_train,y_train, wandb_run)
-    print("Training complete!")
+    print('-'*30)
+    print("Training complete....")
+
     if model.max_val_acc>best_val_acc:
     
         model.save_model(path="models/best_model.npz", val_acc=model.max_val_acc)
         print("New best model Saved.")
     
+    # Evaluvating the model on Test data
+    print('-'*30)
+    eval_dataloader = Dataloader(x_test,y_test,batch_size=128,shuffle=False)
+    metrics = evaluate_model(model, eval_dataloader)
+    print("\nEvaluation Results")
+    print(f"Loss      : {metrics['loss']:.4f}")
+    print(f"Accuracy  : {metrics['accuracy']*100:.2f}%")
+    print(f"Precision : {metrics['precision']:.4f}")
+    print(f"Recall    : {metrics['recall']:.4f}")
+    print(f"F1 Score  : {metrics['f1']:.4f}")
 
-    test_loss, test_acc = model.evaluate(x_test, y_test)
-
-    wandb_run.log({"test/loss": test_loss, "test/acc": test_acc, "val/max_acc": model.max_val_acc})
+    # Logging Test metrics
+    if args.wandb_project != '':
+        wandb_run.log({"test/loss": metrics["loss"], "test/acc": metrics["accuracy"], "val/max_acc": model.max_val_acc})
 
 
 

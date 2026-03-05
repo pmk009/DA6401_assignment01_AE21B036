@@ -1,0 +1,13 @@
+{
+    "Activation": "relu",
+    "batch_size": "32",
+    "Dataset": "mnist",
+    "epochs": "100",
+    "hidden sizes": "128,128,64",
+    "Num_layers": 3,
+    "Learning rate": "0.000232944",
+    "Loss func": "cross_entropy",
+    "Optimizer": "adam",
+    "weight decay": "0.0001",
+    "Initialization": "xavier"
+}

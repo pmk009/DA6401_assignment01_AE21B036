@@ -6,6 +6,9 @@ Implements: Cross-Entropy, Mean Squared Error (MSE)
 import numpy as np
 
 class objective_function:
+    """
+    Common skeleton for all Objective classes
+    """
 
     def __init__(self):
         pass

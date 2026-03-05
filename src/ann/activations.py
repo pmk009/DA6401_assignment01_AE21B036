@@ -8,6 +8,9 @@ import numpy as np
 
 # Base class to represent activations
 class Activation:
+    """
+    Common Skeleton for all Activation classes
+    """
 
     def __init__(self):
         pass
