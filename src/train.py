@@ -38,7 +38,7 @@ def parse_arguments():
     parser.add_argument('-o', '--optimizer', choices=['sgd', 'momentum', 'nag', 'rmsprop', 'adam', 'nadam'], default='adam', help= '\'sgd\', \'momentum\', \'nag\', \'rmsprop\', \'adam\', \'nadam\'' )
     parser.add_argument('-nhl', '--num_layers', type=int, default=3, help= 'Number of hidden layers')
     # parser.add_argument('-sz', '--hidden_size', type=str, default="128,128,64", help='Comma-separated number of neurons (e.g., "128,64,32")')
-    parser.add_argument('-sz', '--hidden_size', type=int, nargs='+', help= 'Number of neurons in each hidden layer (list of values)')
+    parser.add_argument('-sz', '--hidden_size', type=int, default=[128,128,64], nargs='+', help= 'Number of neurons in each hidden layer (list of values)')
     parser.add_argument('-a', '--activation', choices= ['sigmoid', 'tanh', 'relu'], default='relu', help= 'choice of sigmoid, tanh, relu')
     parser.add_argument('-l', '--loss', choices=['mean_squared_error', 'cross_entropy'], default='cross_entropy', help= '(\'cross_entropy\', \'mse\')')
     parser.add_argument('-w_i', '--weight_init', choices= ['random', 'xavier'], default='xavier', help= 'choice of random or xavier')
