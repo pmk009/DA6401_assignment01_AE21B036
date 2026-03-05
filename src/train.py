@@ -53,7 +53,7 @@ def train(args,x_train: np.ndarray,y_train: np.ndarray, wandb_run: wandb.Run|Non
     input_size = int(x_train.shape[1]*x_train.shape[2])
     output_size = 10
     output_act = 'softmax' 
-    NN = NeuralNetwork(input_size,output_size,output_act,args)
+    NN = NeuralNetwork(args,input_size,output_size,output_act)
     
     # Training
     NN.train(x_train,y_train,args.epochs,args.batch_size,wandb_run=wandb_run,save_path= args.save_path)

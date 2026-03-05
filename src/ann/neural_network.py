@@ -21,7 +21,7 @@ class NeuralNetwork:
     Main model class that orchestrates the neural network training and inference.
     """
     
-    def __init__(self, input_size: int, output_size: int, output_act: str, cli_args: argparse.Namespace):
+    def __init__(self, cli_args: argparse.Namespace, input_size: int=28*28, output_size: int=10, output_act: str='softmax'):
         """
         Initialize the neural network.
 

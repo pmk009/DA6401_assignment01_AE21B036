@@ -129,7 +129,7 @@ def main():
     input_size = int(x.shape[1]*x.shape[2])
     output_size = 10
     output_act = 'softmax' 
-    model = NeuralNetwork(input_size,output_size,output_act,args)
+    model = NeuralNetwork(args,input_size,output_size,output_act)
     weights = load_model(args.model_path)
     model.set_weights(weights)
 
