@@ -12,7 +12,6 @@ from utils.data_loader import *
 import wandb
 import json
 
-
 Activations = {'sigmoid': Sigmoid, 'relu':ReLU, 'tanh': Tanh, 'softmax': Softmax }
 Optimizers = {'sgd': SGD, 'momentum': Momentum, 'nag': NAG, 'rmsprop': RMSProp, 'adam': Adam, 'nadam': NAdam}
 objective_functions = {'cross_entropy': Cross_Entropy, "mean_squared_error": Mean_squared_Error}
@@ -21,7 +20,7 @@ class NeuralNetwork:
     Main model class that orchestrates the neural network training and inference.
     """
     
-    def __init__(self, cli_args: argparse.Namespace, input_size: int=28*28, output_size: int=10, output_act: str='softmax'):
+    def __init__(self, cli_args, input_size: int=28*28, output_size: int=10, output_act: str='softmax'):
         """
         Initialize the neural network.
 
@@ -219,9 +218,6 @@ class NeuralNetwork:
         """
         save_dict = self.get_weights()
 
-        save_dict["cli_args"] = np.array([vars(self.cli_args)], dtype=object)
-        save_dict["val_acc"] = val_acc
-
         Architecture = {
             "Activation": str(self.cli_args.activation),
             "batch_size": str(self.cli_args.batch_size),
@@ -236,10 +232,8 @@ class NeuralNetwork:
             "Initialization": str(self.cli_args.weight_init)
         }
 
-        with open(path, 'w') as json_file:
-            json.dump(Architecture, json_file, indent=4, default=str)
 
-        np.savez(path, **save_dict, input_dim=self.input_size,output_dim=self.output_size,output_act=self.output_act_str)
+        np.save(f'{path}_model.npy', save_dict)
 
     @classmethod
     def load(cls, path: str):
@@ -249,12 +243,7 @@ class NeuralNetwork:
         """
         data = np.load(path, allow_pickle=True)
 
-        model = cls(
-            int(data['input_dim']),
-            int(data['output_dim']),
-            str(data['output_act']),
-            argparse.Namespace(**data["cli_args"][0])
-        )
+        model = cls(argparse.Namespace(**data["cli_args"][0]))
 
         for i, layer in enumerate(model.Layers):
             layer.W = data[f"W_{i}"].copy()

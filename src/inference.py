@@ -45,7 +45,7 @@ def load_model(model_path):
     """
     Load trained model from disk.
     """
-    data = np.load(model_path, allow_pickle=True)
+    data = np.load(model_path, allow_pickle=True).item()
     return data
 
 
