@@ -52,7 +52,8 @@ class neural_layer:
         
         np.matmul(self.hk_1.T,delta, out = self.grad_W)
         self.grad_W /= self.hk_1.shape[0] 
-
-        np.mean(delta, axis=0, out= self.grad_b)
         
+        np.sum(delta, axis=0, out=self.grad_b)
+        self.grad_b /= self.hk_1.shape[0]
+
         return delta @ self.W.T

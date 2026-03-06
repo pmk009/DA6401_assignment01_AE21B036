@@ -88,6 +88,8 @@ class NeuralNetwork:
         Returns:
             return grad_w, grad_b
         """
+        print(y_true)
+        print(y_pred)
         
         del_k = self.objective.gradient(y_true,y_pred) # error signal with respect to post-activation stored
 
