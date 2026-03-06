@@ -103,9 +103,7 @@ class NeuralNetwork:
             L = self.Layers[i]
             grad_W[i] = L.grad_W.copy()
             grad_b[i] = L.grad_b.copy()
-
-        print("Shape of grad_Ws:", grad_W.shape, grad_W[1].shape)
-        print("Shape of grad_bs:", grad_b.shape, grad_b[1].shape)
+            
         return grad_W, grad_b
     def update_weights(self):
         """
