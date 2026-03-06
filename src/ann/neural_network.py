@@ -91,7 +91,7 @@ class NeuralNetwork:
         if np.any(np.abs(y_pred)>1):
             y_pred = self.output_act.forward(y_pred)
         if len(y_true)==1:
-            y_true = np.eye(self.num_classes)[y_true]
+            y_true = np.eye(self.output_size)[y_true]
         
         del_k = self.objective.gradient(y_true,y_pred) # error signal with respect to post-activation stored
 
@@ -101,8 +101,8 @@ class NeuralNetwork:
 
  
         # create explicit object arrays to avoid numpy trying to broadcast shapes
-        grad_W = np.empty(10, dtype=object)
-        grad_b = np.empty(10, dtype=object)
+        grad_W = np.empty(self.num_layers+1, dtype=object)
+        grad_b = np.empty(self.num_layers+1, dtype=object)
         for idx,i in enumerate(range(self.num_layers,-1,-1)):
             L = self.Layers[i]
             grad_W[idx] = L.grad_W.copy()
