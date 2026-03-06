@@ -36,7 +36,7 @@ def parse_arguments():
     parser.add_argument('-w_i', '--weight_init', choices= ['random', 'xavier'], default='xavier', help= 'choice of random or xavier')
     parser.add_argument('-wd', '--weight_decay', type= float, default=1e-4, help= 'Weight decay for L2 regularization')
     parser.add_argument('-w_p', '--wandb_project', default= '', help= 'W&B project name')
-    parser.add_argument('-mp', '--model_path', default='best_model.npz', help= 'Path to save trained model')
+    parser.add_argument('-mp', '--model_path', default='best_model.npy', help= 'Path to save trained model')
     
     return parser.parse_args()
 

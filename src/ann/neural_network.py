@@ -27,18 +27,13 @@ class NeuralNetwork:
         Args:
             cli_args: Command-line arguments for configuring the network
         """
-        print(cli_args)
         # Parsing the required arguments and Creating the attributes 
         self.cli_args = cli_args
         self.input_size = input_size
         self.output_size = output_size
         self.output_act_str = output_act
         self.output_act = Activations[output_act]()
-
-        try:
-            self.hidden_sizes = cli_args.hidden_size
-        except:
-            self.hidden_sizes = cli_args.hidden_layer_sizes
+        self.hidden_sizes = cli_args.hidden_size
         self.num_layers = len(self.hidden_sizes)
         self.activation = Activations[cli_args.activation]
         self.weight_init = cli_args.weight_init
