@@ -88,8 +88,10 @@ class NeuralNetwork:
         Returns:
             return grad_w, grad_b
         """
-        print(y_true)
-        print(y_pred)
+        if np.any(np.abs(y_pred)>1):
+            y_pred = self.output_act.forward(y_pred)
+        if len(y_true)==1:
+            y_true = np.eye(self.num_classes)[y_true]
         
         del_k = self.objective.gradient(y_true,y_pred) # error signal with respect to post-activation stored
 
