@@ -27,7 +27,7 @@ class NeuralNetwork:
         Args:
             cli_args: Command-line arguments for configuring the network
         """
-
+        print(cli_args)
         # Parsing the required arguments and Creating the attributes 
         self.cli_args = cli_args
         self.input_size = input_size
