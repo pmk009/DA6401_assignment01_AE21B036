@@ -44,7 +44,7 @@ def parse_arguments():
     parser.add_argument('-w_i', '--weight_init', choices= ['random', 'xavier'], default='xavier', help= 'choice of random or xavier')
     parser.add_argument('-wd', '--weight_decay', type= float, default=1e-4, help= 'Weight decay for L2 regularization')
     parser.add_argument('-w_p', '--wandb_project', default= '', help= 'W&B project name')
-    parser.add_argument('-sp', '--save_path', default='models/model', help= 'Path to save trained model')
+    parser.add_argument('-sp', '--save_path', default='', help= 'Path to save trained model')
     
     return parser.parse_args()
 
@@ -92,10 +92,10 @@ def main():
     print('-'*30)
     print("Training complete....")
 
-    if model.max_val_acc>best_val_acc:
+    # if model.max_val_acc>best_val_acc:
     
-        model.save_model(path="models/best_model.npz", val_acc=model.max_val_acc)
-        print("New best model Saved.")
+    #     model.save_model(path="models/best_model.npz", val_acc=model.max_val_acc)
+    #     print("New best model Saved.")
     
     # Evaluvating the model on Test data
     print('-'*30)

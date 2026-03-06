@@ -102,7 +102,7 @@ class NeuralNetwork:
 
             
     
-    def train(self, X_train: np.ndarray, y_train: np.ndarray, epochs: int, batch_size: int,save_path: str='models/model.npz', shuffle: bool=True, wandb_run: wandb.Run|None=None):
+    def train(self, X_train: np.ndarray, y_train: np.ndarray, epochs: int, batch_size: int,save_path: str='', shuffle: bool=True, wandb_run: wandb.Run|None=None):
         """
         Train the network for specified epochs.
         """
@@ -147,7 +147,7 @@ class NeuralNetwork:
                     f"Loss: {np.mean(loss):.6f}", end="\r")
 
             val_loss, val_acc = self.evaluate(X_val, y_val) # Validation
-            if val_acc>self.max_val_acc:
+            if val_acc>self.max_val_acc and save_path!='':
                 self.max_val_acc = val_acc
                 self.save_model(save_path, val_acc) # saving the best validation accuracy model
             avg_loss = total_loss/ total_samples
