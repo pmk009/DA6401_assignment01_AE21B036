@@ -97,14 +97,14 @@ class NeuralNetwork:
 
  
         # create explicit object arrays to avoid numpy trying to broadcast shapes
-        self.grad_W = np.empty(len(self.Layers), dtype=object)
-        self.grad_b = np.empty(len(self.Layers), dtype=object)
+        grad_W = np.empty(self.num_layers, dtype=object)
+        grad_b = np.empty(self.num_layers, dtype=object)
         for i in range(self.num_layers-1,-1,-1):
             L = self.Layers[i]
-            self.grad_W[i] = L.grad_W.copy()
-            self.grad_b[i] = L.grad_b.copy()
+            grad_W[i] = L.grad_W.copy()
+            grad_b[i] = L.grad_b.copy()
 
-        return self.grad_W, self.grad_b
+        return grad_W, grad_b
     def update_weights(self):
         """
         Update weights using the optimizer.
