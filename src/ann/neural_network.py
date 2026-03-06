@@ -95,8 +95,16 @@ class NeuralNetwork:
 
             del_k = self.Layers[k].backward(del_k) # Compute and store the gradients and error signal to previous layer
 
-        return [self.Layers[i].grad_W for i in range(self.num_layers-1,-1,-1)], [self.Layers[i].grad_b for i in range(self.num_layers-1,-1,-1)]     
-    
+ 
+        # create explicit object arrays to avoid numpy trying to broadcast shapes
+        self.grad_W = np.empty(len(self.Layers), dtype=object)
+        self.grad_b = np.empty(len(self.Layers), dtype=object)
+        for i in range(self.num_layers-1,-1,-1):
+            L = self.Layers[i]
+            self.grad_W[i] = L.grad_W.copy()
+            self.grad_b[i] = L.grad_b.copy()
+
+        return self.grad_W, self.grad_b
     def update_weights(self):
         """
         Update weights using the optimizer.

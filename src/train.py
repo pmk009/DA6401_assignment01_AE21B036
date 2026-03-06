@@ -81,11 +81,11 @@ def main():
     )
     
     # Keeping track of the best model from Validation accuracy
-    if os.path.exists("models/best_model.npz"):
-        data = np.load("models/best_model.npz", allow_pickle=True)
-        best_val_acc = float(data["val_acc"])
-    else:
-        best_val_acc = 0.0
+    # if os.path.exists("models/best_model.npz"):
+    #     data = np.load("models/best_model.npz", allow_pickle=True)
+    #     best_val_acc = float(data["val_acc"])
+    # else:
+    #     best_val_acc = 0.0
     
     # Training and retreiving the model
     model = train(args,x_train,y_train, wandb_run)
