@@ -35,7 +35,10 @@ class NeuralNetwork:
         self.output_act_str = output_act
         self.output_act = Activations[output_act]()
 
-        self.hidden_sizes = cli_args.hidden_size
+        try:
+            self.hidden_sizes = cli_args.hidden_size
+        except:
+            self.hidden_sizes = cli_args.hidden_layer_sizes
         self.num_layers = len(self.hidden_sizes)
         self.activation = Activations[cli_args.activation]
         self.weight_init = cli_args.weight_init
